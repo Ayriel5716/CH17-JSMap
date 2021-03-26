@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/show_clip"
+        android:icon="@android:drawable/ic_media_play"
+        android:orderInCategory="90"
+        android:title="觀看影片"
+        android:visible="false" />
+    <item
+        android:id="@+id/map"
+        android:title="口罩地圖" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@android:drawable/ic_menu_revert"
+        android:orderInCategory="100"
+        android:title="返回"
+        app:showAsAction="ifRoom" />
+</menu>

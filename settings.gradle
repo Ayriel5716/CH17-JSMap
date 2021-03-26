@@ -1,0 +1,11 @@
+include ':1709_GMapJS_trace'
+include ':1708a_GmapJS_Navigation'
+include ':1708_GMapJS_Navigation'
+include ':1707_GMapJS_Location'
+include ':1703_Kaohsiung_trip'
+include ':1706c GMapJS all use JSON'
+include ':1706_GMapJSspinner'
+include ':1705_GooglemapJS'
+include ':1701a_webview'
+include ':1701_WebView'
+rootProject.name = "CH17-JSMap"

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/all.min.css">
+
+    <title>Hello, world!</title>
+    <style>
+    	.banner{
+    		height: 280px;
+    		background-position: center center;
+    		background-size: cover;
+    	}
+    	.bg-cover{
+    		background-position: center center;
+    		background-size: cover;
+    		height: 180px;
+    	}
+    </style>
+  </head>
+  <body class="bg-light">
+  	<div id="app">
+	    <div class="banner pt-5 pl-3" style="background-image: url(img/kaohsiung.jpg);">
+	    	<div class="display-4 font-weight-bold text-white font-italic mt-5">{{ newTitle }}</div>
+	    </div>
+	    <div class="container-fluid">
+	    	<div class="row" style="margin-top: -50px;">
+	    		<div class="col-md-6 offset-3">
+					<select class="custom-select" v-model="currentRegion">
+					  <option selected>--全部--</option>
+					  <option :value="item" v-for="(item, key) in regions">
+					  	{{ item }}
+					  </option>
+					</select>    			
+	    		</div>
+	    	</div>	
+	    	<div class="row">
+	    		<div class="col-md-3 mt-5" v-for="(item ,key) in filterData[currentPage]" v-if="key<10">
+	    			<div class="card h-100">
+	    				<div :style="{backgroundImage: 'url('+ item.Picture1 + ')'}" class="bg-cover"></div>
+	    				<div class="card-body">
+	    					<p class="h4">{{ item.Name }}</p>
+	    					<p class="h5"><i class="far fa-clock fa-sm text-info mr-2"></i>營業時間:{{ item.Opentime }}</p>
+	    					<p class="h5"><i class="fas fa-map-marker-alt fa-sm text-danger mr-2"></i>地址: {{ item.Add }}</p>
+	    					<p class="h5"><i class="fas fa-phone fa-sm text-success mr-2"></i>電話: {{ item.Tel }}</p>
+	    					<p class="h5" v-if="item.Ticketinfo"><i class="fas fa-ticket-alt fa-sm text-warning mr-2"></i>票價: {{ item.Ticketinfo }}</p>
+	    				</div>
+	    			</div>
+	    		</div>
+	    	</div>
+	    	<div class="row justify-content-center mt-3">
+				<nav aria-label="Page navigation example">
+				  <ul class="pagination">
+				    <a class="page-link" href="#" aria-label="Previous" @click="currentPage" v-if="currentPage!=0">
+				        <span aria-hidden="true">&laquo;</span>
+				      </a>
+				    </li>
+				    <li class="page-item" :class="{'active' : currentPage === page-1}" v-for="page in filterData.length" v-if = "page-1 < currentPage+3">
+				    	<a class="page-link"  href="#" @click="currentPage = page-1">{{page}}</a>
+				    </li>
+				    <li class="page-item">
+				      <a class="page-link" href="#" aria-label="Next" @click="currentPage++" v-if="currentPage!=filterData.length-1">
+				        <span aria-hidden="true">&raquo;</span>
+				      </a>
+				    </li>
+				  </ul>
+				</nav>
+	    	</div>	
+	    </div>
+	      		
+  	</div>
+
+
+    <!-- Optional JavaScript; choose one of the two! -->
+
+    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <!-- development version, includes helpful console warnings -->
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<script>
+		var app = new Vue({
+			el: "#app",
+			data: {
+				newTitle: 'Kaohsiung Trip',
+				data: [],	//儲存所有景點的資料
+				currentPage: 0,
+				regions: [],
+				currentRegion: '',
+			},
+			created() {
+				const vm = this;
+				const url = 'https://api.kcg.gov.tw/api/service/get/9c8e1450-e833-499c-8320-29b36b7ace5c';
+				axios.get(url)
+				  .then(function (response) {
+				    // handle success
+				    console.log(response.data.data.XML_Head.Infos.Info);
+				    vm.data = response.data.data.XML_Head.Infos.Info;
+				    vm.getRegion();
+				  })
+				  .catch(function (error) {
+				    // handle error
+				    console.log(error);
+				  })
+				  .then(function () {
+				    // always executed
+				  });
+			},
+			computed: {
+				filterData: function(){
+					const vm = this;
+					let items = [];
+
+					if(vm.currentRegion != ''){
+						items = vm.data.filter(function(item){
+							return item.Add.substring(6, 9) === vm.currentRegion
+						});
+					}else{
+						items = vm.data;
+					}
+
+
+
+					const newData = [];
+					//[[], [],[],[],[],[],[],[],[],[],[],[],.....]
+					items.forEach(function(item, key){
+						if(key % 10 === 0){
+							newData.push([]);
+						}
+						const page = parseInt(key/10);
+						newData[page].push(item);
+					});
+					console.log(newData);
+					return newData;
+				}
+			},
+			methods: {
+				getRegion: function(){
+					const vm = this;
+					const regions = new Set();
+					vm.data.forEach(function(item, key){
+						regions.add(item.Add.substring(6, 9));
+					});
+					vm.regions = Array.from(regions);
+					console.log(regions);
+				}
+			}
+		});
+	</script>
+  </body>
+</html>

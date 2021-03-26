@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">17.6c GMapJS all use JSON</string>
+    <string name="prompt_select_location">請選擇地點</string>
+    <string name="myname">21號陳冠廷</string>
+    <string name="showlocid">顯示目前位置</string>
+    <string name="msg">訊息</string>
+</resources>
